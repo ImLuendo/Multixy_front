@@ -1,15 +1,16 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { LoginModal } from "../LoginModal/LoginModal"
+// import { LoginModal } from "../LoginModal/LoginModal"
 import { CartButton } from "../CartButton/CartButton"
-import { SignupModal } from "../SIgnupModal/SignupModal"
+// import { SignupModal } from "../SIgnupModal/SignupModal"
 import { SearchBar } from "../SearchBar/SearchBar"
+import { useNavigate } from "react-router-dom"
 
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [isLoginOpen, setIsLoginOpen] = useState(false)
-  const [isSignupOpen, setIsSignupOpen] = useState(false)
+  // const [isLoginOpen, setIsLoginOpen] = useState(false)
+  // const [isSignupOpen, setIsSignupOpen] = useState(false)
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const categoriesRef = useRef(null)
@@ -27,6 +28,18 @@ export function Header() {
       document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [])
+
+
+  // Gestion de navigation
+  const navigate = useNavigate();
+
+  function NavigateToSignupPage(){
+    navigate("multixy/signup")
+  }
+
+  function NavigateToLoginPage(){
+    navigate("multixy/login")
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white border-b shadow-sm">
@@ -155,13 +168,14 @@ export function Header() {
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-2">
             <button
-              onClick={() => setIsLoginOpen(true)}
+              onClick={NavigateToLoginPage}
               className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded transition-colors"
             >
               Connexion
             </button>
+
             <button
-              onClick={() => setIsSignupOpen(true)}
+              onClick={NavigateToSignupPage}
               className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded hover:border-blue-600 hover:text-blue-600 transition-colors"
             >
               Inscription
@@ -282,19 +296,13 @@ export function Header() {
             </a>
             <div className="flex flex-col space-y-2 pt-2 border-t">
               <button
-                onClick={() => {
-                  setIsLoginOpen(true)
-                  setIsMobileMenuOpen(false)
-                }}
+                onClick={NavigateToLoginPage}
                 className="w-full py-2 text-center text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
               >
                 Connexion
               </button>
               <button
-                onClick={() => {
-                  setIsSignupOpen(true)
-                  setIsMobileMenuOpen(false)
-                }}
+                onClick={NavigateToSignupPage}
                 className="w-full py-2 text-center border border-gray-300 rounded-md hover:border-blue-600 hover:text-blue-600 transition-colors"
               >
                 Inscription
@@ -306,28 +314,6 @@ export function Header() {
 
       {/* Search Overlay */}
       {isSearchOpen && <SearchBar onClose={() => setIsSearchOpen(false)} />}
-
-      {/* Login Modal */}
-      {isLoginOpen && (
-        <LoginModal
-          onClose={() => setIsLoginOpen(false)}
-          onSignupClick={() => {
-            setIsLoginOpen(false)
-            setIsSignupOpen(true)
-          }}
-        />
-      )}
-
-      {/* Signup Modal */}
-      {isSignupOpen && (
-        <SignupModal
-          onClose={() => setIsSignupOpen(false)}
-          onLoginClick={() => {
-            setIsSignupOpen(false)
-            setIsLoginOpen(true)
-          }}
-        />
-      )}
     </header>
   )
 }

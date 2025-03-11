@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useNavigate } from "react-router-dom"
 
 // eslint-disable-next-line react/prop-types
 export function SignupModal({ onClose, onLoginClick }) {
@@ -77,6 +78,12 @@ export function SignupModal({ onClose, onLoginClick }) {
     onClose()
   }
 
+  const navigate = useNavigate()
+
+  function stopSignup(){
+    navigate("/")
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div
@@ -87,23 +94,11 @@ export function SignupModal({ onClose, onLoginClick }) {
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-2xl font-bold tracking-tight uppercase">Créez votre compte</h2>
           <button
-            onClick={onClose}
-            className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+            onClick={stopSignup}
+            className="p-1 w-10 rounded bg-gray-100 hover:bg-gray-300 transition-colors"
             aria-label="Fermer"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            X
           </button>
         </div>
 
@@ -495,7 +490,7 @@ export function SignupModal({ onClose, onLoginClick }) {
 
             {currentStep === 1 && (
               <div className="text-center text-sm">
-                Déjà un compte?{" "}
+                Vous avez déjà un compte?{" "}
                 <button
                   type="button"
                   onClick={onLoginClick}
@@ -508,19 +503,6 @@ export function SignupModal({ onClose, onLoginClick }) {
           </form>
         </div>
       </div>
-
-      {/* <style jsx>{`
-        @keyframes modalFadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style> */}
     </div>
   )
 }
