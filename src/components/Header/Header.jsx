@@ -1,319 +1,268 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-// import { LoginModal } from "../LoginModal/LoginModal"
-import { CartButton } from "../CartButton/CartButton"
-// import { SignupModal } from "../SIgnupModal/SignupModal"
-import { SearchBar } from "../SearchBar/SearchBar"
+import { useState } from "react"
+import { Menu, X, ShoppingCart, ChevronDown, ChevronUp } from "lucide-react"
+import { Logo } from "../Logo/Logo"
 import { useNavigate } from "react-router-dom"
+import { SearchBar } from "../SearchBar/SearchBar"
 
-export function Header() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  // const [isLoginOpen, setIsLoginOpen] = useState(false)
-  // const [isSignupOpen, setIsSignupOpen] = useState(false)
-  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false)
+export const Header = () => {
+  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const categoriesRef = useRef(null)
-  // const mobileMenuRef = useRef(null)
+  // Placeholder for cart items count - will be replaced with actual state management later
+  const cartItemsCount = 3
+  const logoPath = "src/assets/images/logo_multixy.svg"
+  const navigate = useNavigate()
 
-  // Fermer le dropdown des catégories quand on clique ailleurs
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
-        setIsCategoriesOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [])
-
-
-  // Gestion de navigation
-  const navigate = useNavigate();
-
-  function NavigateToSignupPage(){
-    navigate("multixy/signup")
+  // Fonction pour gérer la sélection de la catégorie
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category)
+    setIsDropdownOpen(false) // Ferme le menu déroulant après la sélection
+    setIsMobileMenuOpen(false) // Ferme le menu mobile après la sélection
   }
 
-  function NavigateToLoginPage(){
-    navigate("multixy/login")
+  // Fonction pour afficher/fermer le menu déroulant
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen)
+  }
+
+  // Fonction pour afficher/fermer le menu mobile
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b shadow-sm">
-      <div className="container flex items-center justify-between h-16 px-4 mx-auto md:px-6">
-        {/* Logo */}
-        <div className="flex items-center">
-          <a href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-5 h-5 text-white"
-              >
-                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z" />
-                <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9" />
-                <path d="M12 3v6" />
-              </svg>
-            </div>
-            <span className="text-2xl font-bold text-blue-600">Multixy</span>
-          </a>
+    <header className="bg-white shadow-lg py-0 font-sans relative">
+      <div className="container mx-auto flex items-center justify-between px-4">
+        {/* VZESION MOBILE DE L'ECRAN */}
+        <button className="md:hidden text-gray-700 focus:outline-none" onClick={toggleMobileMenu}>
+          <Menu className="h-6 w-6" />
+        </button>
+
+        {/* Logo (centered on mobile, left on desktop) */}
+        <div className="text-xl font-semibold tracking-tight text-gray-900 absolute left-1/2 transform -translate-x-1/2 md:static md:left-0 md:transform-none md:flex md:items-center">
+          <Logo image={logoPath} onClick= {()=>{navigate("/")}} />
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
-          <a href="/" className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
-            Accueil
-          </a>
-          <div className="relative" ref={categoriesRef}>
-            <button
-              className="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
-              onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-            >
-              Catégories
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className={`ml-1 h-4 w-4 transition-transform ${isCategoriesOpen ? "rotate-180" : ""}`}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+        {/* SearchBar (just after the logo) */}
+        <div className="md:flex items-center mx-8 ma-96">  {/* Add margin for spacing */}
+          <SearchBar />  {/* Ajouter le composant SearchBar ici */}
+        </div>
+
+        {/* Menu (hidden on mobile) */}
+        <nav className="hidden md:flex flex-1 justify-center">
+          <ul className="flex justify-center space-x-4"> {/* Réduction de l'espacement */}
+            <li>
+              <a
+                href="#"
+                className="px-3 py-1 relative inline-block border-b-2 border-transparent hover:border-blue-500 text-sm font-normal"
               >
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            {isCategoriesOpen && (
-              <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                <div className="py-1">
-                  <a
-                    href="/categories/electronics"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                  >
-                    Électronique
-                  </a>
-                  <a
-                    href="/categories/fashion"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                  >
-                    Mode
-                  </a>
-                  <a
-                    href="/categories/home"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                  >
-                    Maison & Jardin
-                  </a>
-                  <a
-                    href="/categories/beauty"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                  >
-                    Beauté & Santé
-                  </a>
-                  <a
-                    href="/categories/sports"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                  >
-                    Sports & Loisirs
-                  </a>
-                  <a
-                    href="/categories/all"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                  >
-                    Toutes les catégories
-                  </a>
-                </div>
-              </div>
-            )}
-          </div>
-          <a href="/contact" className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
-            Contact
-          </a>
-          <a href="/about" className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
-            À propos
-          </a>
+                Accueil
+              </a>
+            </li>
+            <li className="relative">
+              <a
+                href="#"
+                onClick={toggleDropdown}
+                className="px-3 py-1 relative inline-block border-b-2 border-transparent hover:border-blue-500 flex items-center space-x-2 text-sm font-normal"
+              >
+                <span>Catégories</span>
+                {/* GESTION DE L'ICONE FLECHE SUR LE MENU CATEGOR */}
+                <span className="text-sm transform transition-transform duration-200 ease-in-out">
+                  {isDropdownOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </span>
+              </a>
+              {/* Menu déroulant amélioré */}
+              {isDropdownOpen && (
+                <ul className="absolute left-0 bg-white border border-gray-200 rounded-md mt-2 w-56 shadow-lg transition-all duration-300 ease-in-out z-10 py-2">
+                  <li>
+                    <a
+                      href="#"
+                      onClick={() => handleCategoryClick("Catégorie 1")}
+                      className={`flex items-center px-5 py-2.5 hover:bg-blue-50 transition-all duration-200 ease-in-out ${
+                        selectedCategory === "Catégorie 1"
+                          ? "bg-blue-500 text-white hover:bg-blue-600"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      <span className="w-2 h-2 rounded-full bg-blue-500 mr-3"></span>
+                      Catégorie 1
+                    </a>
+                  </li>
+                  {/* Autres éléments de catégorie */}
+                </ul>
+              )}
+            </li>
+            <li>
+              <a
+                href="#"
+                className="px-3 py-1 relative inline-block border-b-2 border-transparent hover:border-blue-500 text-sm font-normal"
+              >
+                Contact
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                className="px-3 py-1 relative inline-block border-b-2 border-transparent hover:border-blue-500 text-sm font-normal"
+              >
+                À propos
+              </a>
+            </li>
+          </ul>
         </nav>
-
-        {/* Actions */}
-        <div className="flex items-center space-x-4">
-          {/* Search */}
-          <button
-            onClick={() => setIsSearchOpen(true)}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-            aria-label="Rechercher"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
+        
+        {/* Connexion, Inscription et Panier (hidden on mobile) */}
+        <div className="hidden md:flex items-center space-x-4">
+          <button onClick={()=> {navigate("/multixy/login")}} className="px-4 py-2 border border-blue-600 rounded text-sm font-normal hover:bg-blue-50 transition-colors">
+            Connexion
           </button>
-
-          {/* User Actions */}
-          <div className="hidden md:flex items-center space-x-2">
-            <button
-              onClick={NavigateToLoginPage}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded transition-colors"
-            >
-              Connexion
-            </button>
-
-            <button
-              onClick={NavigateToSignupPage}
-              className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded hover:border-blue-600 hover:text-blue-600 transition-colors"
-            >
-              Inscription
-            </button>
+          <button onClick={()=>{navigate("/multixy/signup")}} className="px-4 py-2 bg-blue-600 text-white rounded text-sm font-normal hover:bg-blue-700 transition-colors">
+            Inscription
+          </button>
+          <div className="ml-2 p-2 hover:bg-gray-100 rounded-full cursor-pointer transition-colors relative">
+            <ShoppingCart className="h-5 w-5 text-gray-700" />
+            {/* Badge pour le nombre d'articles dans le panier */}
+            <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {cartItemsCount}
+            </span>
           </div>
+        </div>
 
-          {/* Cart Component */}
-          <CartButton />
-
-          {/* Mobile Menu */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-md md:hidden hover:bg-gray-100 transition-colors"
-          >
-            {isMobileMenuOpen ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-              </svg>
-            )}
-          </button>
+        {/* Panier (visible on mobile) */}
+        <div className="md:hidden flex items-center">
+          <div className="p-1.5 hover:bg-gray-100 rounded-full cursor-pointer transition-colors relative">
+            <ShoppingCart className="h-5 w-5 text-gray-700" />
+            {/* Badge pour le nombre d'articles dans le panier (mobile) */}
+            <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+              {cartItemsCount}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu (overlay) - Half screen with blue top and white bottom */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t">
-          <nav className="flex flex-col p-4 space-y-4">
-            <a href="/" className="text-base font-medium text-gray-700 hover:text-blue-600 transition-colors">
-              Accueil
-            </a>
-            <div>
-              <button
-                className="flex items-center justify-between w-full text-base font-medium text-gray-700 hover:text-blue-600 transition-colors"
-                onClick={() => {
-                  const submenu = document.getElementById("mobile-categories")
-                  if (submenu) {
-                    submenu.style.display = submenu.style.display === "none" ? "block" : "none"
-                  }
-                }}
-              >
-                <span>Catégories</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+        <>
+          {/* Backdrop overlay */}
+          <div className="fixed inset-0 bg-black/30 z-40 md:hidden" onClick={toggleMobileMenu}></div>
+
+          {/* Half-screen menu */}
+          <div className="fixed inset-y-0 left-0 w-[60%] max-w-xs z-50 md:hidden flex flex-col shadow-xl">
+            {/* White header with logo and blue X */}
+            <div className="bg-white border-b border-gray-200">
+              <div className="flex justify-between items-center p-4">
+                <div className="text-xl font-semibold text-blue-600">Logo</div>
+                <button
+                  onClick={toggleMobileMenu}
+                  className="text-blue-600 focus:outline-none p-1 hover:bg-blue-50 rounded-full transition-colors"
                 >
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-              <div id="mobile-categories" className="pl-4 mt-2 space-y-2 hidden">
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Blue section with menu items */}
+            <div className="bg-blue-600 text-white flex-1">
+              {/* Main menu items */}
+              <div className="p-5 space-y-4">
                 <a
-                  href="/categories/electronics"
-                  className="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                  href="#"
+                  className="block py-2 px-3 rounded-md hover:bg-blue-500 transition-colors font-medium"
+                  onClick={toggleMobileMenu}
                 >
-                  Électronique
+                  Accueil
                 </a>
+
+                <div>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center justify-between w-full py-2 px-3 rounded-md hover:bg-blue-500 transition-colors font-medium"
+                  >
+                    <span>Catégories</span>
+                    <span>
+                      {isDropdownOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                    </span>
+                  </button>
+
+                  {/* Categories dropdown */}
+                  {isDropdownOpen && (
+                    <div className="mt-2 ml-4 pl-2 border-l-2 border-blue-400 space-y-2">
+                      <a
+                        href="#"
+                        onClick={() => handleCategoryClick("Catégorie 1")}
+                        className="flex items-center py-1.5 px-3 text-white/90 hover:text-white rounded-md hover:bg-blue-500/50"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-white mr-3"></span>
+                        Catégorie 1
+                      </a>
+                      <a
+                        href="#"
+                        onClick={() => handleCategoryClick("Catégorie 2")}
+                        className="flex items-center py-1.5 px-3 text-white/90 hover:text-white rounded-md hover:bg-blue-500/50"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-white mr-3"></span>
+                        Catégorie 2
+                      </a>
+                      <a
+                        href="#"
+                        onClick={() => handleCategoryClick("Catégorie 3")}
+                        className="flex items-center py-1.5 px-3 text-white/90 hover:text-white rounded-md hover:bg-blue-500/50"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-white mr-3"></span>
+                        Catégorie 3
+                      </a>
+                      <a
+                        href="#"
+                        onClick={() => handleCategoryClick("Catégorie 4")}
+                        className="flex items-center py-1.5 px-3 text-white/90 hover:text-white rounded-md hover:bg-blue-500/50"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-white mr-3"></span>
+                        Catégorie 4
+                      </a>
+                    </div>
+                  )}
+                </div>
+
                 <a
-                  href="/categories/fashion"
-                  className="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                  href="#"
+                  className="block py-2 px-3 rounded-md hover:bg-blue-500 transition-colors font-medium"
+                  onClick={toggleMobileMenu}
                 >
-                  Mode
+                  Contact
                 </a>
+
                 <a
-                  href="/categories/home"
-                  className="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                  href="#"
+                  className="block py-2 px-3 rounded-md hover:bg-blue-500 transition-colors font-medium"
+                  onClick={toggleMobileMenu}
                 >
-                  Maison & Jardin
-                </a>
-                <a
-                  href="/categories/beauty"
-                  className="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
-                >
-                  Beauté & Santé
-                </a>
-                <a
-                  href="/categories/sports"
-                  className="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
-                >
-                  Sports & Loisirs
+                  À propos de nous
                 </a>
               </div>
             </div>
-            <a href="/contact" className="text-base font-medium text-gray-700 hover:text-blue-600 transition-colors">
-              Contact
-            </a>
-            <a href="/about" className="text-base font-medium text-gray-700 hover:text-blue-600 transition-colors">
-              À propos
-            </a>
-            <div className="flex flex-col space-y-2 pt-2 border-t">
-              <button
-                onClick={NavigateToLoginPage}
-                className="w-full py-2 text-center text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Connexion
-              </button>
-              <button
-                onClick={NavigateToSignupPage}
-                className="w-full py-2 text-center border border-gray-300 rounded-md hover:border-blue-600 hover:text-blue-600 transition-colors"
-              >
-                Inscription
-              </button>
-            </div>
-          </nav>
-        </div>
-      )}
 
-      {/* Search Overlay */}
-      {isSearchOpen && <SearchBar onClose={() => setIsSearchOpen(false)} />}
+            {/* White bottom section */}
+            <div className="bg-white">
+              <div className="p-5 flex flex-row justify-center space-x-3 border-t border-gray-200">
+                <button
+                  className="flex-1 py-2.5 border border-blue-600 rounded-md text-blue-600 font-medium hover:bg-blue-50 transition-colors"
+                  onClick={toggleMobileMenu}
+                >
+                  Connexion
+                </button>
+                <button
+                  className="flex-1 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors"
+                  onClick={toggleMobileMenu}
+                >
+                  Inscription
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </header>
   )
 }
