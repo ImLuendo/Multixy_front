@@ -29,8 +29,5 @@ root.render(
         </Routes>
       </BrowserRouter>
     </Provider>
-
   </QueryClientProvider>
-  
-  
 )

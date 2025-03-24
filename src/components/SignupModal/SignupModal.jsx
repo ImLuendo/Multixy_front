@@ -1,22 +1,24 @@
-
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
-import { addUser } from '../../multixy_store/signupSlice/signupSlice';
-import { Multixy_api } from '../../api/multixy-api';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../multixy_store/signupSlice/signupSlice";
+import { Multixy_api } from "../../api/multixy-api";
+import Swal from "sweetalert2";
 
 export const SignupModal = () => {
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone: '',
-    address: '',
-    password: '',
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    address: "",
+    password: "",
   });
+
   const [fieldErrors, setFieldErrors] = useState({});
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -62,12 +64,36 @@ export const SignupModal = () => {
   const mutation = useMutation({
     mutationFn: Multixy_api.createUser,
     onSuccess: (data) => {
-      console.log("Utilisateur créé avec succès", data);
+      setIsSubmitting(false);
+      Swal.fire({
+        title: "Succès",
+        text: "Votre compte a été créé avec succès !",
+        icon: "success",
+        confirmButtonText: "OK",
+        customClass: {
+          popup: "swal-small-popup",
+          title: "swal-small-title",
+          content: "swal-small-text",
+          confirmButton: "swal-small-button",
+        },
+      });
       dispatch(addUser(data));
       navigate("/multixy/login");
     },
     onError: (error) => {
-      console.error("Erreur lors de la création de l'utilisateur:", error);
+      setIsSubmitting(false);
+      Swal.fire({
+        title: "Erreur",
+        text: error?.response?.data?.message || "Votre email est déjà associé à un compte multixy !!!! Veillez rassayer plus tard",
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          popup: "swal-small-popup",
+          title: "swal-small-title",
+          content: "swal-small-text",
+          confirmButton: "swal-small-button",
+        },
+      });
     },
   });
 
@@ -75,11 +101,8 @@ export const SignupModal = () => {
     e.preventDefault();
     if (!validateForms()) return;
 
-    try {
-      mutation.mutate(formData);
-    } catch (error) {
-      console.error("Erreur lors de l'envoi du formulaire:", error);
-    }
+    setIsSubmitting(true);
+    mutation.mutate(formData);
   };
 
   return (
@@ -90,7 +113,7 @@ export const SignupModal = () => {
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           {["first_name", "last_name", "email", "phone", "address", "password"].map((field, index) => (
-            <div key={index} className={`${index < 3 ? "col-span-1" : "col-span-1"}`}>
+            <div key={index} className="col-span-1">
               <label className="block text-gray-600 text-sm font-normal">
                 {field === "first_name" ? "Nom" :
                  field === "last_name" ? "Prénom" :
@@ -104,9 +127,9 @@ export const SignupModal = () => {
                 value={formData[field]}
                 onChange={handleChange}
                 className={`w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2
-                  ${fieldErrors[field] ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-400"}
-                `}
+                  ${fieldErrors[field] ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-400"}`}
                 required
+                disabled={isSubmitting}
               />
               {fieldErrors[field] && <p className="text-red-500 text-xs mt-1">{fieldErrors[field]}</p>}
             </div>
@@ -114,16 +137,19 @@ export const SignupModal = () => {
           <div className="col-span-2">
             <button
               type="submit"
-              className="w-full py-2 mt-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300 focus:outline-none"
+              className={`w-full py-2 mt-2 font-semibold rounded-md transition duration-300 focus:outline-none
+                ${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}`}
+              disabled={isSubmitting}
             >
-              Enregistrer
+              {isSubmitting ? "Enregistrement..." : "Enregistrer"}
             </button>
             <p className="mt-3 text-sm font-normal text-center">
-              Vous avez déjà un compte ?  
+              Vous avez déjà un compte ?
               <Link to="/multixy/login" className="text-blue-600"> Connectez-vous</Link>
             </p>
           </div>
         </form>
       </div>
     </div>
-  )}
+  );
+};
