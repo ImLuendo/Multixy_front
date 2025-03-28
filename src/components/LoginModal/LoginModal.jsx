@@ -61,16 +61,14 @@ export const LoginModal = () => {
     onSuccess: (data) => {
       clearTimeout(mutation.timeoutId); // Annuler le timeout si réponse reçue
       dispatch(loginSuccess(data));
+      Swal.close();
 
-      Swal.fire({
-        title: "Connexion réussie !",
-        text: "Bienvenue sur Multixy.",
-        icon: "success",
-        confirmButtonText: "OK",
-        timer: 3000,
-      });
-
-      navigate("/");
+      // Vérifiez le rôle de l'utilisateur et redirigez en conséquence
+      if (data.user && data.user.role === 'admin') {
+        navigate("/administration/dashbord"); // Redirige vers l'administration pour un admin
+      } else {
+        navigate("/"); // Sinon vers la page d'accueil
+      }
     },
     onError: (error) => {
       clearTimeout(mutation.timeoutId); // Annuler le timeout en cas d'erreur
@@ -102,7 +100,7 @@ export const LoginModal = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-12 p-4">
+    <div className="flex justify-center items-center mt-28 p-4">
       <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md border">
         <h2 className="text-xl font-semibold text-center text-blue-600 mb-4">
           SE CONNECTER
@@ -157,3 +155,4 @@ export const LoginModal = () => {
     </div>
   );
 };
+

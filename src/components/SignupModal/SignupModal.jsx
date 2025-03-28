@@ -106,7 +106,7 @@ export const SignupModal = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-12 p-4">
+    <div className="flex justify-center items-center mt-28 p-4">
       <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-2xl border">
         <h2 className="text-xl font-semibold text-center text-blue-600 mb-4">
           CRÉER VOTRE COMPTE
