@@ -14,6 +14,7 @@ import { AdminLayout } from './admin/AdminLayout/AdminLayout';
 import { CategoryList } from './admin/Category_list/CategoryList';
 import { AddProductForm } from './admin/AddProduct/AddProductForm';
 import { ProductList } from './admin/ProductList/ProductList';
+import { CategoryUpdate } from './admin/CategoryUpdate/CategoryUpdate';
 
 // Création du client React Query
 const queryClient = new QueryClient();
@@ -38,6 +39,8 @@ root.render(
             <Route path="category_list" element={<CategoryList />} />
             <Route path="addproduct" element={<AddProductForm />} />
             <Route path="product_list" element={<ProductList />} />
+            <Route path="updatecategory/:id" element={<CategoryUpdate />} />
+
           </Route>
         </Routes>
       </BrowserRouter>

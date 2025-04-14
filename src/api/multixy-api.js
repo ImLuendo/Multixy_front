@@ -72,6 +72,7 @@ export class Multixy_api {
     }
   }
 
+  // 🚀 Nouvelle fonction : Récupérer tous les produits avec pagination
   static async fetchAllProducts({ page, limit }) {
     try {
       // Envoie des paramètres de pagination dans la requête GET
@@ -89,5 +90,78 @@ export class Multixy_api {
       throw new Error(error.response?.data?.message || "Erreur lors de la récupération des produits.");
     }
   }
-  
+
+  // 🚀 Nouvelle fonction : Mettre à jour un produit
+  static async updateProduct(productId, productData) {
+    try {
+      const response = await axios.put(`${BASE_URL}/api/products/update/${productId}`, productData, {
+        headers: {
+          'Content-Type': 'application/json', // S'assurer que les données sont envoyées en JSON
+        },
+      });
+      return response.data; // Retourner les données du produit mis à jour
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du produit :", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour du produit.");
+    }
+  }
+
+  // 🚀 Nouvelle fonction : Supprimer un produit (soft delete)
+  static async deleteProduct(productId) {
+    try {
+      const response = await axios.delete(`${BASE_URL}/api/products/delete/${productId}`, {
+        headers: {
+          'Content-Type': 'application/json', // S'assurer que les données sont envoyées en JSON
+        },
+      });
+      return response.data; // Retourner la réponse après la suppression
+    } catch (error) {
+      console.error("Erreur lors de la suppression du produit :", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erreur lors de la suppression du produit.");
+    }
+  }
+
+    // 🔍 Récupérer une catégorie par son ID
+  static async getCategoryById(categoryId) {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/categories/${categoryId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la récupération de la catégorie :", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erreur lors de la récupération de la catégorie.");
+    }
+  }
+
+  // ✏️ Mettre à jour une catégorie
+  static async updateCategory(categoryId, updatedCategory) {
+    try {
+      const response = await axios.put(`${BASE_URL}/api/categories/update/${categoryId}`, updatedCategory,
+        {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la catégorie :", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour de la catégorie.");
+    }
+  }
+
+  // ❌ Supprimer une catégorie (soft delete)
+  static async deleteCategory(categoryId) {
+    try {
+      const response = await axios.delete(`${BASE_URL}/api/categories/delete/${categoryId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data; // Retourne le message de succès ou les infos supprimées
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la catégorie :", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erreur lors de la suppression de la catégorie.");
+    }
+  }
+
+
 }
